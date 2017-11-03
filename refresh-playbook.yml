@@ -38,3 +38,4 @@
 
   roles:
     - { role: upload-site, tags: upload-site }
+    - { role: setup-sass, tags: setup-sass }

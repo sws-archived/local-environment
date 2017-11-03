@@ -1,7 +1,7 @@
 #!/bin/bash
 
 read -p "What site would you like to work with? (ie. jse-soe) " sync_site
-echo "drupal_domain $sync_site" >> local_vars.yml
+echo "drupal_domain: '$sync_site'" >> local_vars.yml
 
 echo "Let's make sure we have Docker and Ansible installed."
 echo "As well as, Docker related python packages."
@@ -35,6 +35,11 @@ sudo ifconfig lo0 alias 192.168.88.88/24
 export ANSIBLE_FORCE_COLOR=true
 
 # Export commands for working with container
-alias le-restart='sudo ifconfig lo0 alias 192.168.88.88/24 && docker start drupalvm && docker exec -it drupalvm /var/www/'
-alias le-setup='ansible-playbook -c docker -i inventory setup-playbook.yml -K'
-alias le-refresh='ansible-playbook -c docker -i inventory refresh-playbook.yml'
+echo "alias le-restart='sudo ifconfig lo0 alias 192.168.88.88/24 && docker start drupalvm && docker exec -it drupalvm /var/www/'" >> ~/.bash_profile
+echo "alias le-setup='ansible-playbook -c docker -i inventory setup-playbook.yml -K'" >> ~/.bash_profile
+echo "alias le-refresh='ansible-playbook -c docker -i inventory refresh-playbook.yml'" >> ~/.bash_profile
+source ~/.bash_profile
+
+echo "You may now run: le-setup if you are setting up a container for the first time."
+echo "Or: le-refresh if you are syncing a site."
+echo "Or: le-restart if you have restarted your computer and want to restart your containerized webserver."
