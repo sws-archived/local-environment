@@ -1,0 +1,59 @@
+---
+# Ansible role for creating a Docker container
+# https://github.com/SU-SWS/drupal-caravan
+# ============================================
+#
+# The purpose of this role is to instantiate a STATE, in this case the state# of a container on the host machine.
+#
+# INPUTS:
+#   container_name
+#   container_distro
+#   container_ip_address
+#   localhost_http_port
+#   localhost_https_port
+#   localhost_project_path
+#   container_webserver_root
+#   localhost_home_path
+#   localhost_ssh_key_name
+#
+# OUTPUTS:
+# --
+#
+# ALTERNATIVE ROLES:
+# --
+#
+# REQUIREMENTS:
+# Docker is running on host machine.
+#
+# KNOWN ISSUES:
+# https://github.com/ansible/ansible/issues/20492
+
+- name: Pull container image with command
+  command: "docker pull geerlingguy/docker-{{ container_distro }}-ansible:latest"
+
+# "Error pulling image geerlingguy/docker-ubuntu1604-ansible:latest - 'module' object has no attribute 'get_config_header'"
+#- name: Pull container image
+#  docker_image:
+#    name: "geerlingguy/docker-{{ container_distro }}-ansible:latest"
+#    state: present
+
+- name: Create a container
+  docker_container:
+    name: "{{ container_name }}"
+    image: "geerlingguy/docker-{{ container_distro }}-ansible:latest"
+    ports:
+      - "{{ container_ip_address }}:{{ localhost_http_port }}:80"
+      - "{{ container_ip_address }}:{{ localhost_https_port }}:433"
+      - "{{ container_ip_address }}:{{ localhost_ssh_port }}:2020"
+    volumes:
+      - "/tmp:/tmp"
+      - "~/.ssh/{{ localhost_ssh_key_name }}:/root/.ssh/id_rsa"
+      - "~/.ssh/{{ localhost_ssh_key_name }}.pub:/root/.ssh/id_rsa.pub"
+    state: started
+    restart: yes
+    restart_policy: always
+    privileged: yes
+    command: /lib/systemd/systemd
+
+- name: Refresh Ansible inventory
+  meta: refresh_inventory

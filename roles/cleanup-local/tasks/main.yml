@@ -1,0 +1,27 @@
+---
+# Ansible role for removing local copy of site database and files.
+# https://github.com/SU-SWS/ansible-playbooks
+# ================================================================
+#
+# The purpose of this role is to instantiate a STATE, in this case that we
+# remove the local copy of a site's database and files from your /tmp directory.
+#
+# INPUTS:
+#   inventory_hostname
+#
+# OUTPUTS:
+# --
+#
+# ALTERNATIVE ROLES:
+# --
+#
+# REQUIREMENTS:
+# --
+#
+# KNOWN ISSUES:
+# --
+#
+- name: Remove inventory_hostname directory in tmp
+  file:
+    path: "/tmp/{{ inventory_hostname }}"
+    state: absent

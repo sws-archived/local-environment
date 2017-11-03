@@ -1,0 +1,67 @@
+---
+# Ansible role for uploading the database and files to Site Factory.
+# https://github.com/SU-SWS/ansible-playbooks
+# ==================================================================
+#
+# This role uploads the database and files from local to Site Factory. It also
+# runs a number of tasks to transform the database in such a way that images
+# and absolute paths will work in the new ACSF environment. If any part of this
+# role fails for a site, restart from the tag "upload-site".
+#
+# INPUTS:
+#   drupal_domain
+#   server_alias
+#   site_prefix
+#   server
+#   dept_site
+#   wait_time
+#
+# OUTPUTS:
+#   files_public_path
+#
+# ALTERNATIVE ROLES:
+# --
+#
+# REQUIREMENTS:
+# --
+#
+# KNOWN ISSUES:
+# drush arr does not appear to be working.
+
+- name: Create site directory
+  file:
+    path: "/var/www/{{ drupal_domain }}"
+    state: directory
+
+- name: Unarchive download
+  unarchive:
+    src: /tmp/{{ sunetid }}-copy.tar.gz
+    dest: "/var/www/{{ drupal_domain }}"
+
+- name: Load database
+  shell: "mysql -u root -proot {{ drupal_db_name }} < /var/www/{{ drupal_domain }}/ds_{{ drupal_domain }}.sql"
+
+- name: Set permissions on site directory
+  file:
+    mode: 0775
+    path: "/var/www/{{ drupal_domain }}"
+
+- name: Set permissions on files directory
+  file:
+    mode: 0777
+    path: "/var/www/{{ drupal_domain }}/public_html/sites/default/files"
+
+- name: Remove settings and maintenance files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/var/www/{{ drupal_domain }}/public_html/sites/default/settings.local.php"
+    - "/var/www/{{ drupal_domain }}/public_html/maintenance.html"
+
+- name: Add base_url line
+  lineinfile:
+    path: "/var/www/{{ drupal_domain }}/public_html/sites/default/settings.php"
+    state: present
+    insertafter: EOF
+    line: '$base_url = "http://{{ drupal_domain }}.local:9000";'

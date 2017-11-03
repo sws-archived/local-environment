@@ -1,0 +1,46 @@
+# Attempting to override DrupalVM default variables
+
+# Path information
+drupal_core_path: "/var/www/{{ drupal_domain }}"
+
+# DrupalVM override: do not install a vanilla Drupal site
+drupal_build_composer_project: false
+drupal_build_composer: false
+drupal_composer_path: false
+drupal_install_site: false
+
+# DrupalVM override: we need a drush alias in site-aliases
+# I think; this installs an alias in /root/.drush
+# But it would be nice if blt could find the alias in /root/.drush
+# So that we wouldn't have to touch the build repo
+configure_drush_aliases: true
+
+installed_extras:
+  - drush
+  - selenium
+
+php_version: "5.6"
+php_memory_limit: "1024M"
+
+# Set selenium version and do not install Chrome yet
+selenium_install_chrome: yes
+selenium_version: "2.47.1"
+
+# MySQL databases and users.
+mysql_databases:
+  - name: "{{ drupal_db_name }}"
+    encoding: utf8mb4
+    collation: utf8mb4_general_ci
+
+# Extra vhost for viewing test results
+apache_vhosts:
+  - servername: "{{ drupal_domain }}.local"
+    serveralias: "www.{{ drupal_domain }}.local"
+    documentroot: "/var/www/{{ drupal_domain }}/public_html"
+    extra_parameters: |
+      <FilesMatch \.php$>
+        SetHandler "proxy:fcgi://127.0.0.1:9000"
+      </FilesMatch>
+
+  - servername: "behat.{{ drupal_domain }}.local"
+    documentroot: "/var/www/{{ drupal_domain }}/public_html/reports/behat"

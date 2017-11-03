@@ -1,0 +1,9 @@
+---
+- name: Clear site cache
+  uri:
+    url: "https://www.{{ sitefactory_environment }}cardinalsites.acsitefactory.com/api/v1/sites/{{ item }}/cache-clear"
+    method: POST
+    user: "{{ acquia_username }}"
+    password: "{{ acquia_api_key }}"
+    force_basic_auth: yes
+  with_items: "{{ site_id }}"

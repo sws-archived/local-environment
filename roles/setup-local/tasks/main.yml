@@ -1,0 +1,52 @@
+---
+# Ansible role for setting up OSX to host a Docker container
+# https://github.com/SU-SWS/drupal-caravan
+# ==========================================================
+#
+# The purpose of this role is to run TASKS, that prepare a local, development
+# machine to host a Docker container. We do not know what might be in someone's
+# /etc/hosts file, for example. Nor would we ever want to overwrite their
+# /etc/hosts file with a template that deletes all local entries.
+#
+# INPUTS:
+#   local_sitename
+#   container_ip_address
+#   ansible_os_family
+#
+# OUTPUTS:
+# --
+#
+# ALTERNATIVE ROLES:
+# --
+#
+# REQUIREMENTS:
+# Permission to edit /etc/hosts
+#
+# KNOWN ISSUES:
+# --
+#
+
+#- name: Add container IP to /etc/hosts
+#  lineinfile:
+#    path: /etc/hosts
+#    insertafter: EOF
+#    line: "{{ container_ip_address }}  {{ item }}.local"
+#  become: true
+#  with_items:
+#    - "{{ local_sitename }}"
+#    - "behat.{{ local_sitename }}"
+#
+# This is for automated testing environments.
+- name: create IP alias on Ubuntu
+  command: "ifconfig eth0:0 {{ container_ip_address }}"
+  become: true
+  when: ansible_os_family == "Debian"
+
+- name: Debug variable
+  debug:
+    var: drupal_domain
+
+- name: Copy over DrupalVM config file
+  template:
+    src: config.yml.j2
+    dest: drupal-vm/config.yml

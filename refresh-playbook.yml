@@ -1,0 +1,40 @@
+---
+# Ansible playbook that setups up a test environment and site copy.
+# https://github.com/SU-SWS/local-environment
+# =================================================================
+#
+# Can be run with:
+# ansible-playbook -c docker -i inventory refresh-playbook.yml
+# ansible-playbook -c docker -i inventory refresh-playbook.yml --tags "setup-local" -l local -K
+
+# KNOWN ISSUES:
+# --
+#
+# PLAY 1: Download image and setup local access to container.
+# ===========================================================
+- hosts: 127.0.0.1
+  connection: local
+
+  vars_files:
+    - local_vars.yml
+
+  roles:
+    - { role: download-site, tags: download-site }
+
+# PLAY 2
+# ======
+- hosts: drupalvm
+  connection: docker
+
+  vars_files:
+    - local_vars.yml
+
+  pre_tasks:
+    - name: Standardize hostname
+      set_fact:
+        drupal_db_name: "{{ drupal_domain | lower | regex_replace('[^a-z1-9]') }}"
+      tags:
+        - always
+
+  roles:
+    - { role: upload-site, tags: upload-site }
