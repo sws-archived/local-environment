@@ -33,13 +33,13 @@
     path: "/var/www/{{ drupal_domain }}"
     state: directory
 
-- name: Unarchive download
-  unarchive:
-    src: /tmp/{{ sunetid }}-copy.tar.gz
-    dest: "/var/www/{{ drupal_domain }}"
-
+#- name: Unarchive download
+#  unarchive:
+#    src: /tmp/{{ sunetid }}-copy.tar.gz
+#    dest: "/var/www/{{ drupal_domain }}"
+#
 - name: Load database
-  shell: "mysql -u root -proot {{ drupal_db_name }} < /var/www/{{ drupal_domain }}/ds_{{ drupal_domain }}.sql"
+  shell: "database_name=$(echo /var/www/{{ drupal_domain }}/ds_*.sql); mysql -u root -proot {{ drupal_db_name }} < $database_name"
 
 - name: Set permissions on site directory
   file:
@@ -58,10 +58,9 @@
   with_items:
     - "/var/www/{{ drupal_domain }}/public_html/sites/default/settings.local.php"
     - "/var/www/{{ drupal_domain }}/public_html/maintenance.html"
+    - "/var/www/{{ drupal_domain }}/sites/default/settings.php"
 
-- name: Add base_url line
-  lineinfile:
-    path: "/var/www/{{ drupal_domain }}/public_html/sites/default/settings.php"
-    state: present
-    insertafter: EOF
-    line: '$base_url = "http://{{ drupal_domain }}.local:9000";'
+- name: Update database connection information
+  template:
+    src: settings.php.j2
+    dest: "/var/www/{{ drupal_domain }}/public_html/sites/default/settings.php"

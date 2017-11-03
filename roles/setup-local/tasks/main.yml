@@ -26,16 +26,15 @@
 # --
 #
 
-#- name: Add container IP to /etc/hosts
-#  lineinfile:
-#    path: /etc/hosts
-#    insertafter: EOF
-#    line: "{{ container_ip_address }}  {{ item }}.local"
-#  become: true
-#  with_items:
-#    - "{{ local_sitename }}"
-#    - "behat.{{ local_sitename }}"
-#
+- name: Add container IP to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    insertafter: EOF
+    line: "{{ container_ip_address }}  {{ item }}.local"
+  become: true
+  with_items:
+    - "{{ drupal_domain }}"
+
 # This is for automated testing environments.
 - name: create IP alias on Ubuntu
   command: "ifconfig eth0:0 {{ container_ip_address }}"
