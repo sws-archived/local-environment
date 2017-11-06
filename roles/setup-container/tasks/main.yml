@@ -47,8 +47,8 @@
       - "{{ container_ip_address }}:{{ localhost_ssh_port }}:2020"
     volumes:
       - "/tmp:/tmp"
-      - "~/.ssh/{{ localhost_ssh_key_name }}:/root/.ssh/id_rsa"
-      - "~/.ssh/{{ localhost_ssh_key_name }}.pub:/root/.ssh/id_rsa.pub"
+      - "{{ localhost_home }}/.ssh/{{ localhost_ssh_key_name }}:/root/.ssh/id_rsa"
+      - "{{ localhost_home }}/.ssh/{{ localhost_ssh_key_name }}.pub:/root/.ssh/id_rsa.pub"
     state: started
     restart: yes
     restart_policy: always
