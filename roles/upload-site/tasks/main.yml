@@ -48,6 +48,7 @@
     mode: 0775
     owner: www-data
     group: www-data
+    recurse: yes
     path: "/var/www/{{ drupal_domain }}"
 
 - name: Set permissions on files directory
@@ -55,6 +56,7 @@
     mode: 0777
     owner: www-data
     group: www-data
+    recurse: yes
     path: "/var/www/{{ drupal_domain }}/public_html/sites/default/files"
 
 - name: Remove settings and maintenance files
@@ -70,3 +72,6 @@
   template:
     src: settings.php.j2
     dest: "/var/www/{{ drupal_domain }}/public_html/sites/default/settings.php"
+
+# git config name
+# git config email

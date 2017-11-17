@@ -1,0 +1,41 @@
+imports:
+  - ../../includes/config/default.yml
+  - ../../includes/extensions/drupal.extension.yml
+# This may need to be overriden if selenium is still using firefox
+  - ../../includes/extensions/mink.extension.yml
+
+## Default Profile Settings (Sites)
+acsf:
+  extensions:
+    Behat\MinkExtension:
+      base_url: https://{{ sitename }}-test.cardinalsites.stanford.edu
+      browser_name: googlechrome
+      javascript_session: selenium2
+      sessions:
+        default:
+          selenium2:
+            wd_host: http://127.0.0.1:4444/wd/hub
+            browser: chrome
+            capabilities:
+              chrome:
+                switches:
+                  - "--headless"
+                  - "--disable-gpu"
+      goutte:
+        guzzle_parameters:
+          verify: false
+    Drupal\DrupalExtension:
+      blackbox: ~
+      api_driver: 'drush'
+      drush:
+        alias: acsf.test.cardinald7.{{ sitename }}
+    emuse\BehatHTMLFormatter\BehatHTMLFormatterExtension:
+      name: html
+      renderer: Twig,Behat2
+      file_name: index
+      print_args: true
+      print_outp: true
+      loop_break: true
+  formatters:
+    html:
+      output_path: ./test-results

@@ -35,7 +35,7 @@ sudo ifconfig lo0 alias 192.168.88.88/24
 export ANSIBLE_FORCE_COLOR=true
 
 # Export commands for working with container
-echo "alias le-restart='sudo ifconfig lo0 alias 192.168.88.88/24 && docker start drupalvm && docker exec -it drupalvm /var/www/'" >> ~/.bash_profile
+echo "alias le-restart='sudo ifconfig lo0 alias 192.168.88.88/24 && docker start drupalvm && docker exec -it drupalvm bash'" >> ~/.bash_profile
 echo "alias le-setup='ansible-playbook -c docker -i inventory setup-playbook.yml -K'" >> ~/.bash_profile
 echo "alias le-refresh='ansible-playbook -c docker -i inventory refresh-playbook.yml'" >> ~/.bash_profile
 source ~/.bash_profile

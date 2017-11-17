@@ -1,0 +1,71 @@
+---
+# Ansible role for uploading the database and files to Site Factory.
+# https://github.com/SU-SWS/ansible-playbooks
+# ==================================================================
+#
+# This role uploads the database and files from local to Site Factory. It also
+# runs a number of tasks to transform the database in such a way that images
+# and absolute paths will work in the new ACSF environment. If any part of this
+# role fails for a site, restart from the tag "upload-site".
+#
+# INPUTS:
+#   drupal_domain
+#   server_alias
+#   site_prefix
+#   server
+#   dept_site
+#   wait_time
+#
+# OUTPUTS:
+#   files_public_path
+#
+# ALTERNATIVE ROLES:
+# --
+#
+# REQUIREMENTS:
+# --
+#
+# KNOWN ISSUES:
+# --
+- name: Add RVM to package manager
+  shell: "apt-add-repository -y ppa:rael-gc/rvm && apt-get update"
+
+- name: Download RVM
+  package:
+    name: "rvm"
+    state: "latest"
+
+#- name: Install RVM
+#  shell: "source /etc/profile.d/rvm.sh"
+#  args:
+#    executable: /bin/bash
+#
+- name: Install Ruby
+  shell: "source ~/.bash_profile && rvm install ruby && source ~/.bash_profile"
+  args:
+    executable: /bin/bash
+
+- name: Install SASS
+  shell: "source ~/.bash_profile && gem install sass"
+  args:
+    executable: /bin/bash
+
+- name: Download NVM
+  shell: "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.0/install.sh | bash"
+  args:
+    executable: /bin/bash
+
+- name: Install Node
+  shell: "source ~/.bashrc && /root/.nvm/nvm.sh install node"
+  args:
+    executable: /bin/bash
+
+- name: Use Node
+  shell: "/root/.nvm/nvm.sh use node"
+  args:
+    executable: /bin/bash
+
+#- name: Install Grunt CLI
+#  shell: "/root/.nvm/versions/node/v9.0.0/bin/npm install -g grunt-cli"
+#  args:
+#    executable: /bin/bash

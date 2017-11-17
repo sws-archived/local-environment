@@ -10,9 +10,10 @@ local_vars.yml
 .galaxy_install_info
 
 # Drupal VM specific files.
+drupal-vm/
 local.config.yml
 Vagrantfile.local
-/config.yml
+drupal-vm/config.yml
 /docker-compose.yml
 /drupal.make.yml
 /examples/prod/inventory
