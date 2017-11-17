@@ -45,12 +45,6 @@
   debug:
     var: drupal_domain
 
-- name: Download DrupalVM
-  git:
-    repo: "https://github.com/geerlingguy/drupal-vm.git"
-    dest: "."
-    version: "4.6.0"
-
 - name: Copy over DrupalVM config file
   template:
     src: config.yml.j2
