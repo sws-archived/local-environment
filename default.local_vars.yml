@@ -1,0 +1,7 @@
+# Config file for creating container
+# https://github.com/SU-SWS/drupal-caravan
+# ========================================
+#
+localhost_home:                    "/Users/jdoe"
+sunetid:                           "jdoe"
+localhost_ssh_key_name:            "id_rsa"
